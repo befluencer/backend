@@ -1,0 +1,56 @@
+name: staging dreemcode on server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: clone repository to github runner
+        uses: actions/checkout@v4
+
+      - name: set environment variables
+        run : | 
+                  cp .env-sample .env
+                  # export DB_HOST="${{ secrets.MONGO_HOST }}"
+                  # export DB_USER="${{ secrets.MONGO_USER }}"
+                  # export DB_PASSWORD="${{ secrets.MONGO_PWD }}"
+                  # export DB_NAME="${{ secrets.MONGO_DB }}"
+                  
+                  # export MAIL_PASSWORD="${{secrets.MAIL_PWD}}"
+                  # export SMSKEY="${{ secrets.SMS_KEY }}"
+
+                  envsubst < .env-sample > .env
+                  # cat .env
+
+      - name: login into dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PWD }}
+
+
+      - name: build docker image and push to hub
+        working-directory: server-ops
+        run: |
+          make push
+
+  deploy:
+    runs-on: 'ubuntu-latest'
+    needs: build
+    steps:
+      - name: login to ssh
+        run: |
+          sshpass -p '${{ secrets.SERVER_PWD }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} <<'ENDSSH'
+          cd /home/befluencer
+          make restart-backend-server
+          # make restart-scheduling-worker
+          ENDSSH
+
+      - name: give response
+        run: | 
+          echo "========== BACKEND DEPLOYED SUCCESSFULLY ================="
