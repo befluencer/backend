@@ -1,0 +1,8 @@
+.*
+__py*
+!.gitignore
+!.env-sample
+tests
+env
+bin
+celerybeat-schedule
