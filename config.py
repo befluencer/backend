@@ -12,17 +12,7 @@ CONFIG = {
         # in array values, use * to mean everything is allowed
         "allowedOrigins": [
             "http://localhost:3000",
-            "https://dev.mydreemuni.com",
-            "https://admin.mydreemuni.com",
-            "https://www.mydreemuni.com",
-            "https://dev.dreemuni.com",
-            "https://admin.dreemuni.com",
-            "https://www.dreemuni.com",
-            "http://172.20.16.1",
-            "http://172.20.10.2",
-            'http://172.20.16.1:81',
-            'http://172.20.16.1:4173',
-
+            "*"
         ],
         'allowedMethods': ['GET','POST','PUT','DELETE'],
         'notAllowedHeaders': [],
