@@ -8,4 +8,12 @@ from dreema.helpers import getconfig
 class SampleController:
 
     async def welcome(request: Request):
-        return response(message=SysMessages.SETUP_COMPLETED, status=SysCodes.SETUP_COMPLETED)
+        mod = AppInfoModel()
+        res = await mod.read()
+
+        if res.status < 0:
+            return await mod.create({'name':'Befluencer', 'colors':{'accent':'#4BC', 'secondary':'#CFA'}})
+        
+        return response(res)
+
+        return response(message='Setup completed. Let us build!', status=SysCodes.SETUP_COMPLETED)

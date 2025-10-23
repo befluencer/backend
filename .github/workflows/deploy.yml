@@ -16,10 +16,10 @@ jobs:
       - name: set environment variables
         run : | 
                   cp .env-sample .env
-                  # export DB_HOST="${{ secrets.MONGO_HOST }}"
-                  # export DB_USER="${{ secrets.MONGO_USER }}"
-                  # export DB_PASSWORD="${{ secrets.MONGO_PWD }}"
-                  # export DB_NAME="${{ secrets.MONGO_DB }}"
+                  export DB_HOST="${{ secrets.SERVER_HOST }}"
+                  export DB_USER="${{ secrets.SERVER_USER }}"
+                  export DB_PASSWORD="${{ secrets.MONGO_PWD }}"
+                  # export DB_NAME="${{ secrets.SERVER_USER }}"
                   
                   # export MAIL_PASSWORD="${{secrets.MAIL_PWD}}"
                   # export SMSKEY="${{ secrets.SMS_KEY }}"

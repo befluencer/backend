@@ -13,8 +13,8 @@ from codes import SysCodes, SysMessages
 
 
 def response(
-    message=SysMessages.OP_COMPLETED,
-    status: int = SysCodes.OP_COMPLETED,
+    message=None,
+    status= None,
     data=None,
     trace=None,
     custom=False,
@@ -28,7 +28,7 @@ def response(
         else False
     )
 
-    if envCustom or custom:
+    if envCustom or custom or not status :
         return Json(
             {
                 "data": message,
