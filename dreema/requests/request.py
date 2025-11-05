@@ -1,10 +1,10 @@
 from datetime import datetime
+from dreema.middlewares.authware import AuthWare
 from dreema.helpers import Json
 from dreema.responses import SysCodes, SysMessages
 from dreema.files import FileParser
 from urllib.parse import parse_qs
 import json
-from dreema.security import Tokenizer
 
 
 """
@@ -26,9 +26,9 @@ class Request:
     def setNewBody(self, data:dict):
         self._body = Json(data)
 
-    async def user(self, types=""):
-        user = await Tokenizer.authUser(self, types=types)
-        return user
+    async def user(self, usertype=""):
+        _type = 1 if usertype.lower() == 'creator' else 2
+        return await AuthWare.user(token=self.auth(), usertype=_type)
     
     async def applyRules(self, rules: dict):
         """

@@ -9,15 +9,6 @@ from dreema.utils.smsapi import SMSAPI
 from dreema.utils.emailapi import EmailAPI
 from dreema.scheduler.setup import scheduler, runAsyncJob
 from dreema.utils.templates import MessageTemplates
-from models.messageModel import MessageModel
-from models.noftMedModel import NotfMediums
-from models.notfInsModel import NotfInsModel
-from models.paymentsModel import PaymentsModels
-from models.notfSubsModel import NotfSubsModel
-from models.studentModel import StudentModel
-from models.uniModel import UnisModel
-from models.checkersModel import CheckerModel
-from models.checkerOrders import CheckerOrderModel
 import asyncio
 
 loop = asyncio.new_event_loop()

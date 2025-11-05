@@ -12,9 +12,9 @@ class Tokenizer:
         return f"{name}={value}; Path=/; Max-Age={max_age}; Expires={expires}; HttpOnly; Secure; SameSite=None;Partitioned;"
 
     @staticmethod
-    def generateAccessToken( expiryHours:int = 12 ):
+    def generateAccessToken( prefix="du|", postfix="",expiryHours:int = 12 ):
         return Json({
-            'token':f'du|{Encrypt.getSecret()}',
+            'token':f'{prefix}{Encrypt.getSecret()}{postfix}',
             'expiry': int((datetime.now() + timedelta(hours=expiryHours)).timestamp())
         })
     

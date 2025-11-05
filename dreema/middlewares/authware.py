@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import Union
-from backend.codes import SysCodes, SysMessages
-from backend.dreema.helpers.serialization import Json
-from backend.dreema.security.encrypt import Encrypt
+from dreema.middlewares.dbware import DBware
+from dreema.responses import SysCodes, SysMessages
+from dreema.helpers.serialization import Json
+from dreema.security.encrypt import Encrypt
 from models._modelsList import getModel
 
 class AuthWare:
@@ -34,24 +35,22 @@ class AuthWare:
             
 
     @staticmethod 
-    async def user( request , types ):
+    async def user( token , usertype = 1 ):
         
-        # browser cookie
-        headers = request.headers()
-        tokens = Json(headers).get("cookie","").replace(" ","")
-        tokens = tokens.split(";")
-        
-        tokensdict = {}
-        for token in tokens:
-            if token:
-                key, value = token.split('=')
-                tokensdict[key] =  value
-
         # using bearer tokens
+        token = token.get('value')
+        if not token:
+            return Json({'data':None, 'status':SysCodes.AUTH_FAILED, 'message':'Could not find access token'})
         
-        # compare request tokens or headers
-        # if Encrypt.verifyHash(token, user.auth.token):
-            # do something
-
+        # 
+        if usertype == 1:
+            mod = DBware()
+            usr = await mod.read(model='creators', filters={'auth.token':token})
+            if usr.status < 0:
+                return Json({'data':None, 'status':SysCodes.INVALID_CREDS, 'message':SysMessages.INVALID_CREDS})
+            
+            del usr.data.auth
+            return Json({'data':usr.data, 'status':SysCodes.INVALID_CREDS, 'message':"Authentication successful"})
+        
         return Json({'data':None, 'status':SysCodes.INVALID_CREDS, 'message':'Auth setup not done'})
   

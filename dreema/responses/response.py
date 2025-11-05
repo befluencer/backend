@@ -4,6 +4,7 @@ from dreema.logging import Logger
 from datetime import datetime
 
 """
+    
     Use: 
         Handle all outgoing responses from the library
 """
@@ -43,11 +44,11 @@ class Response:
 
         # Build default headers
         body = json.dumps(content).encode("utf-8")
-        # origin = self.request.headers().origin if hasattr(self.request.headers(),"origin") else "https://dev.dreemuni.com"
+        origin = self.request.headers().origin if hasattr(self.request.headers(),"origin") else "https://unknown.com"
 
         defaultHeaders = [
             (b"content-type", b"application/json"),
-            (b"access-control-allow-origin", self.request.headers().origin.encode()),
+            (b"access-control-allow-origin", origin),
             (b"access-control-allow-methods", b"GET, POST, PUT, DELETE, OPTIONS"),
             (b"access-control-allow-headers", b"Content-Type, Authorization"),
             (b"access-control-allow-credentials", b"true"),
@@ -56,7 +57,6 @@ class Response:
 
         # Add custom headers (e.g., Set-Cookie)
         for key, value in headers.items():
-            print('running backwards')
             customHeaders.append((key.encode("latin-1"), value.encode("latin-1")))
 
         # logging

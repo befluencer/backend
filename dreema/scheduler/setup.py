@@ -23,18 +23,18 @@ scheduler.conf.update(
     broker_connection_max_retries=30,
 )
 
-scheduler.conf.beat_schedule = {
-    "RepeatableJob": {
-        "task": "RepeatableJob",
-        "schedule": 60.0,  # every 10 seconds
-        "args": (),
-    },
-    # "UpdateNotf": {
-    #     "task": "UpdateNotf",
-    #     "schedule": 120.0,  # every 60 seconds
-    #     "args": (),
-    # }
-}
+# scheduler.conf.beat_schedule = {
+#     "RepeatableJob": {
+#         "task": "RepeatableJob",
+#         "schedule": 60.0,  # every 10 seconds
+#         "args": (),
+#     },
+#     # "UpdateNotf": {
+#     #     "task": "UpdateNotf",
+#     #     "schedule": 120.0,  # every 60 seconds
+#     #     "args": (),
+#     # }
+# }
 
 
 

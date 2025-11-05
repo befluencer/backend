@@ -227,7 +227,7 @@ class MessageTemplates:
                     <!-- Welcome Banner -->
                     <tr>
                         <td style="background-color: #002244; padding: 20px; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                            <h2 style="color: white; margin: 0;">Welcome to DreemUni!</h2>
+                            <h2 style="color: white; margin: 0;">Befluencer Account Authentication!</h2>
                         </td>
                     </tr>
 
@@ -246,7 +246,6 @@ class MessageTemplates:
 
                         <p style="font-size: 14px; color: #666;">If you didn't request this code, please ignore this message.</p>
 
-                        <p style="font-size: 14px; color: #999; margin-top: 40px;">— The DreemUni Team</p>
                     </td>
                     </tr>
                 </table>

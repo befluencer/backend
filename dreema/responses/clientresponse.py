@@ -28,7 +28,7 @@ def response(
         else False
     )
 
-    if envCustom or custom or not status :
+    if envCustom or custom:
         return Json(
             {
                 "data": message,

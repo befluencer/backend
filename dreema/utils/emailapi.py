@@ -21,7 +21,7 @@ class EmailAPI:
                 for des in desties:
                     msg = EmailMessage()
                     msg['Subject'] = subject
-                    msg['From'] = formataddr(("DreemUni", getenv("MAIL_SOURCE")))
+                    msg['From'] = formataddr(("Befluencer", getenv("MAIL_SOURCE")))
                     msg['To'] = des
                     msg.set_content("This email contains HTML content.")
                     msg.add_alternative(message, subtype='html')
@@ -33,7 +33,7 @@ class EmailAPI:
             return Json({'data':None, 'status':SysCodes.OP_FAILED, 'message':SysMessages.OP_FAILED, 'trace':f'{e}'})
         
 
-    async def sendEmailOTP(self, code:str, destination:list, subject="DreemUni Account Verification✅"):
+    async def sendEmailOTP(self, code:str, destination:list, subject="Befluencer Account Verification✅"):
         message = MessageTemplates.emailOTP(code)
         res = await self.sendEmail(message=message, destinations=destination, subject=subject)
         return res

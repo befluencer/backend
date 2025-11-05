@@ -28,7 +28,7 @@ class Encrypt:
         return ''.join(random.choices(chars, k=length))
     
     @staticmethod
-    def getSecret(bytelength:int=32):
+    def getSecret(bytelength:int=12):
         secret = secrets.token_hex(bytelength)
         return secret
     

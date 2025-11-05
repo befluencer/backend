@@ -33,9 +33,8 @@ class Connector:
     ):
         try:
             uri = f"mongodb://{quote(user)}:{quote(pwd)}@{host}:{port}/{db}?tls={str(tls).lower()}&authSource=admin"
-            print(uri)
             client = AsyncIOMotorClient(uri, minPoolSize=10, maxPoolSize=300, serverSelectionTimeoutMS=5000)
-    
+
             return Json(
                 {
                     "data": {"connection": client},
