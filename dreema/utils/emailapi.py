@@ -11,6 +11,7 @@ from dreema.helpers.configurations import getconfig, getenv
 class EmailAPI: 
     async def sendEmail(self, message, destinations:list, subject:str="DreemUni"):
         try:
+            print(getenv("MAIL_HOST"),getenv("MAIL_PASSWORD"),getenv("MAIL_SOURCE"))
             desties = [destinations] if isinstance(destinations, str) else destinations
             with smtplib.SMTP(getenv("MAIL_HOST"), int(getenv("MAIL_PORT"))) as smtp:
                 smtp.ehlo()
