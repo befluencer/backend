@@ -21,7 +21,7 @@ jobs:
                   export DB_PASSWORD="${{ secrets.MONGO_PWD }}"
                   # export DB_NAME="${{ secrets.SERVER_USER }}"
                   
-                  # export MAIL_PASSWORD="${{secrets.MAIL_PWD}}"
+                  export MAIL_PASSWORD="${{secrets.MAIL_PWD}}"
                   # export SMSKEY="${{ secrets.SMS_KEY }}"
 
                   envsubst < .env-sample > .env
