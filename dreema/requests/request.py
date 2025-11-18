@@ -27,7 +27,12 @@ class Request:
         self._body = Json(data)
 
     async def user(self, usertype=""):
-        _type = 1 if usertype.lower() == 'creator' else 2
+        if usertype.lower() == 'creator':
+            _type = 1
+        elif usertype.lower() == 'brand':
+            _type = 2
+        else:
+            _type = 1  # default to creator
         return await AuthWare.user(token=self.auth(), usertype=_type)
     
     async def applyRules(self, rules: dict):

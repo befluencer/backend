@@ -50,7 +50,16 @@ class AuthWare:
                 return Json({'data':None, 'status':SysCodes.INVALID_CREDS, 'message':SysMessages.INVALID_CREDS})
             
             del usr.data.auth
-            return Json({'data':usr.data, 'status':SysCodes.INVALID_CREDS, 'message':"Authentication successful"})
+            return Json({'data':usr.data, 'status':SysCodes.AUTH_SUCCESS, 'message':"Authentication successful"})
+        
+        if usertype == 2:
+            mod = DBware()
+            usr = await mod.read(model='brands', filters={'auth.token':token})
+            if usr.status < 0:
+                return Json({'data':None, 'status':SysCodes.INVALID_CREDS, 'message':SysMessages.INVALID_CREDS})
+            
+            del usr.data.auth
+            return Json({'data':usr.data, 'status':SysCodes.AUTH_SUCCESS, 'message':"Authentication successful"})
         
         return Json({'data':None, 'status':SysCodes.INVALID_CREDS, 'message':'Auth setup not done'})
   

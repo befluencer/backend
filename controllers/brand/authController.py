@@ -15,18 +15,8 @@ from dreema.middlewares import DBware
 
 class AuthController:
 
-    async def logout(request:Request):
-        user = await request.user()
-        if user.status < 0:
-            return response(user,custom=True)
-        
-        redis = Redis(request.redisClient)
-        mod = StudentModel()
-        res = await redis.update( key=getconfig('redisKeys').STUDENTS, model=mod, filters={'phone':user.data.phone}, data={'auth.token':""})
-        return response(res, custom=True)
-
     async def getme(request:Request):
-        user = await request.user('creator')
+        user = await request.user('brand')
 
         if user.status < 0:
             return response(user,custom=True)
@@ -39,7 +29,7 @@ class AuthController:
         mid = DBware()
       
         if body.get('email', None):
-            res = await mid.read('creators', filters={'email':body.email,})
+            res = await mid.read('brands', filters={'email':body.email,})
             if res.status > 0:
                 return response(message='Email already used',status=SysCodes.OP_FAILED)
 
@@ -47,24 +37,24 @@ class AuthController:
 
     async def updateUser(request:Request):
         body = await request.body()
-        user = await request.user('creator')
+        user = await request.user('brand')
 
         if user.status < 0:
             return response(user, custom=True)
         
         mid = DBware()    
         if body.get('name',None):
-            await mid.update('creators', filters={'_id':user.data._id}, data={'name': body.name})
+            await mid.update('brands', filters={'_id':user.data._id}, data={'name': body.name})
 
         if body.get('phone',None):
-            await mid.update('creators', filters={'_id':user.data._id}, data={'phone': body.phone})
+            await mid.update('brands', filters={'_id':user.data._id}, data={'phone': body.phone})
 
         if body.get('email',None):
-            await mid.update('creators', filters={'_id':user.data._id}, data={'email': body.email})
+            await mid.update('brands', filters={'_id':user.data._id}, data={'email': body.email})
 
 
         if body.get('onboardingStep',"None") != "None":
-            await mid.update('creators', filters={'_id':user.data._id}, data={'metadata.onboardingSteps': body.tourStep})
+            await mid.update('brands', filters={'_id':user.data._id}, data={'metadata.onboardingSteps': body.tourStep})
 
         return response(message=SysMessages.UPDATE_SUCCESS)
 
@@ -79,7 +69,7 @@ class AuthController:
         
         body = body.data
         mod = DBware()
-        usr = await mod.read(model='creators',filters={'email':(body.email).lower().strip()})
+        usr = await mod.read(model='brands',filters={'email':(body.email).lower().strip()})
         if usr.status < 0:
             return response(status=SysCodes.NO_RECORD, message="User not found")
 
@@ -90,13 +80,13 @@ class AuthController:
         
         _id =  userinfo._id
         auth = Json(userinfo.get('auth', {}))
-        rawtoken = Tokenizer.generateAccessToken(prefix="bf|creator|")
+        rawtoken = Tokenizer.generateAccessToken(prefix="bf|brand|")
         auth.token = rawtoken.token #Encrypt.hash(rawtoken.token)
         auth.tokenExpiry = rawtoken.expiry
         lastLogin = int(datetime.now().timestamp())
         
         # update access token
-        res = await mod.update( model='creators', filters={'_id':_id}, data={'auth': auth, 'lastLogin':lastLogin})
+        res = await mod.update( model='brands', filters={'_id':_id}, data={'auth': auth, 'lastLogin':lastLogin})
         if res.status < 0:
             return response(status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED)
         
@@ -126,7 +116,7 @@ class AuthController:
             return response(message="Password must be 8+ characters with at least one uppercase, lowercase, number and symbol", status=SysCodes.OP_FAILED)
 
         mid = DBware()
-        res = await mid.read('creators',filters={'email':(body.email).lower().strip()})
+        res = await mid.read('brands',filters={'email':(body.email).lower().strip()})
 
         if res.status < 0:
             return response(status=SysCodes.INVALID_CREDS, message=SysMessages.INVALID_CREDS)
@@ -141,7 +131,7 @@ class AuthController:
         userinfo.auth.password = Encrypt.hash(body.password)
         del userinfo._id
 
-        res = await mid.update('creators',filters={'_id':_id}, data=userinfo)
+        res = await mid.update('brands',filters={'_id':_id}, data=userinfo)
         return response(res, custom=True)
        
     async def requestOTP(request:Request=None):
@@ -156,7 +146,7 @@ class AuthController:
 
         # check if the school name or cod exists
         mid = DBware()
-        usr = await mid.read(model='creators',filters={'email':(body.email).lower(),})
+        usr = await mid.read(model='brands',filters={'email':(body.email).lower(),})
         
         if usr.status < 0:
             return response(status=SysCodes.NO_RECORD, message="User not found")
@@ -178,7 +168,7 @@ class AuthController:
         auth.otpLast  = int((datetime.now() + timedelta(seconds=10)).timestamp())
         auth.otpStatus = False
         
-        res = await mid.update( 'creators', filters={'_id':userinfo._id}, data={'auth':auth})
+        res = await mid.update( 'brands', filters={'_id':userinfo._id}, data={'auth':auth})
         return response(res, custom=True)
     
     async def verifyOTP(request:Request):
@@ -193,7 +183,7 @@ class AuthController:
         body = body.data
         
         mid = DBware()
-        usr = await mid.read(model='creators',filters={'email':(body.email).lower().strip(),})
+        usr = await mid.read(model='brands',filters={'email':(body.email).lower().strip(),})
         
         if usr.status < 0:
             return response(status=SysCodes.NO_RECORD, message="User not found")
@@ -211,10 +201,10 @@ class AuthController:
             return response(status=SysCodes.AUTH_EXPIRED, message='OTP has expired')
         
         # update necessary info on user
-        await mid.update( 'creators', filters={'_id':userinfo._id}, data={'auth.otpStatus':True, 'metadata.verified':True})
+        await mid.update( 'brands', filters={'_id':userinfo._id}, data={'auth.otpStatus':True, 'metadata.verified':True})
         return response(status=SysCodes.OP_SUCCESS, message='User verified')
 
-    async def addCreator(request:Request):
+    async def addBrand(request:Request):
         body = await request.trimApplyRules({
             'email' : 'required',
             'password': 'required',
@@ -239,14 +229,14 @@ class AuthController:
         # check email and phone
         if body.get('email',None):
             body.email = body.email.lower().strip()
-            res = await mid.read('creators',filters={'email':body.email})
+            res = await mid.read('brands',filters={'email':body.email})
 
             if res.status > 0:
                 return response(data=None, status=SysCodes.ALREADY_EXISTS, message='Email already exists')
         
         # create an account -> remember to check password strength
         auth = Json({})
-        token = Tokenizer.generateAccessToken(prefix="bf|creator|")
+        token = Tokenizer.generateAccessToken(prefix="bf|brand|")
         rawtoken = token.token
         token.token = rawtoken 
         passwordhash = Encrypt.hash(body.password)
@@ -263,7 +253,7 @@ class AuthController:
         body.auth = auth
         body.metadata = metadata
 
-        res = await mid.create('creators', data=body)
+        res = await mid.create('brands', data=body)
         if res.status < 0:
             return response(res, custom=True)
         
@@ -277,3 +267,4 @@ class AuthController:
             'email': body.get('email', None),
             'accessToken': rawtoken
         })
+

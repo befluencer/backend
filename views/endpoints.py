@@ -1,6 +1,8 @@
 from dreema.routing import route, routegroup
 import controllers.sampleController as Sample
 from .creators import authView
+from .creators import mediaKitView
+from .brand import authView as brandAuthView
 
 """
         author:  Raphael Djangmah
@@ -11,5 +13,7 @@ routes = [
         # creating single routes
         route(path="/", methods=["GET", "POST"], handler=Sample.SampleController.welcome),
         
-        routegroup(authView.AuthView.route, '/creator/auth')
+        routegroup(authView.AuthView.route, '/creator/auth'),
+        routegroup(mediaKitView.MediaKitView.route, '/creator/mediakit'),
+        routegroup(brandAuthView.AuthView.route, '/brand/auth')
 ]
