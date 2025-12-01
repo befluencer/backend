@@ -1,17 +1,18 @@
 from datetime import datetime
-from dreema.middlewares.authware import AuthWare
 from dreema.helpers import Json
 from dreema.responses import SysCodes, SysMessages
 from dreema.files import FileParser
 from urllib.parse import parse_qs
 import json
+from dreema.security import Tokenizer
 
 
 """
     
     Use:
-        Manages all request information from clients and the server
+            Manages all request information from clients and the server
 """
+
 
 class Request:
     def __init__(self, scope, receive, send) -> None:
@@ -26,16 +27,11 @@ class Request:
     def setNewBody(self, data:dict):
         self._body = Json(data)
 
-    async def user(self, usertype=""):
-        if usertype.lower() == 'creator':
-            _type = 1
-        elif usertype.lower() == 'brand':
-            _type = 2
-        else:
-            _type = 1  # default to creator
-        return await AuthWare.user(token=self.auth(), usertype=_type)
+    async def user(self, types=""):
+        user = await Tokenizer.authUser(self, types=types)
+        return user
     
-    async def applyRules(self, rules: dict):
+    async def applyRules(self, rules: dict, body: dict = None):
         """
         Use:
             Useful for validating request body checking for
@@ -47,7 +43,7 @@ class Request:
         Returns:
             json: A json serialized response containing the body
         """
-        body = await self.body()
+        body = body if body else await self.body()
         systemrules = ["required", "int", "str", "float", "list", "bool"]
 
         for key, rule in rules.items():
@@ -128,7 +124,7 @@ class Request:
                         }
                     )
 
-    async def trimApplyRules(self, rules: dict):
+    async def trimApplyRules(self, rules: dict, body: dict = None):
         """
             Use:
                 Useful for validating request body checking for 
@@ -140,7 +136,7 @@ class Request:
             Returns:
                 json: A json serialized response containing the body
         """
-        body = await self.body()
+        body = body if body else await self.body()
         systemrules = ["required",  "int", "str", "float", "list", "bool","nullable",]
         checkedkeys = []
 

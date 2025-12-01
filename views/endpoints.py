@@ -3,6 +3,7 @@ import controllers.sampleController as Sample
 from .creators import authView
 from .creators import mediaKitView
 from .brand import authView as brandAuthView
+from .systemviews import SystemViews
 
 """
         author:  Raphael Djangmah
@@ -15,5 +16,6 @@ routes = [
         
         routegroup(authView.AuthView.route, '/creator/auth'),
         routegroup(mediaKitView.MediaKitView.route, '/creator/mediakit'),
-        routegroup(brandAuthView.AuthView.route, '/brand/auth')
+        routegroup(brandAuthView.AuthView.route, '/brand/auth'),
+        routegroup(SystemViews.route)
 ]

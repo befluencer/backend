@@ -68,47 +68,6 @@ class AuthController:
 
         return response(message=SysMessages.UPDATE_SUCCESS)
 
-    async def login(request:Request):
-        body = await request.trimApplyRules({
-            'email': 'required',
-            'password': 'required',
-        })
-         
-        if body.status < 0:
-            return response(body, custom=True)
-        
-        body = body.data
-        mod = DBware()
-        usr = await mod.read(model='creators',filters={'email':(body.email).lower().strip()})
-        if usr.status < 0:
-            return response(status=SysCodes.NO_RECORD, message="User not found")
-
-        # verify password
-        userinfo = usr.data
-        if not Encrypt.verifyHash( body.password, userinfo.auth.password):
-            return response(status=SysCodes.INVALID_CREDS, message=SysMessages.INVALID_CREDS)
-        
-        _id =  userinfo._id
-        auth = Json(userinfo.get('auth', {}))
-        rawtoken = Tokenizer.generateAccessToken(prefix="bf|creator|")
-        auth.token = rawtoken.token #Encrypt.hash(rawtoken.token)
-        auth.tokenExpiry = rawtoken.expiry
-        lastLogin = int(datetime.now().timestamp())
-        
-        # update access token
-        res = await mod.update( model='creators', filters={'_id':_id}, data={'auth': auth, 'lastLogin':lastLogin})
-        if res.status < 0:
-            return response(status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED)
-        
-        # create and update cookie
-        return response(data={
-            '_id': _id,
-            'name': userinfo.firstname,
-            'email': userinfo.get('email', None),   
-            'metadata': userinfo.metadata,
-            'accessToken': rawtoken.token
-        }, status=SysCodes.OP_COMPLETED)
-
     async def resetPassword(request:Request):
         body = await request.trimApplyRules({
             'email': 'required',
@@ -240,9 +199,10 @@ class AuthController:
         if body.get('email',None):
             body.email = body.email.lower().strip()
             res = await mid.read('creators',filters={'email':body.email})
+            brand = res = await mid.read('brands',filters={'email':body.email})
 
-            if res.status > 0:
-                return response(data=None, status=SysCodes.ALREADY_EXISTS, message='Email already exists')
+            if res.status > 0 or brand.status > 0:
+                return response(data=None, status=SysCodes.ALREADY_EXISTS, message='Email already used')
         
         # create an account -> remember to check password strength
         auth = Json({})

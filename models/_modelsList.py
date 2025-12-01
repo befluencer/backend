@@ -1,3 +1,4 @@
+from models.appLogosModel import AppLogosModel
 from .appInfoModel import AppInfoModel
 from .creators import creatorsModel 
 from .brands import brandModel
@@ -8,6 +9,7 @@ MODELS = {
     'creators': creatorsModel.CreatorsModel(),
     'brands': brandModel.BrandModel(),
     'mediakits': mediakitModel.MediaKitModel(),
+    'app-logos': AppLogosModel(),
 }
 
 def getModel(key):
