@@ -12,7 +12,7 @@ from dreema.helpers import getenv
 
 # autoparse function arguments to the the config
 def autoParse():
-    result = {"port": int(getenv('SERVER_PORT')), "reload": True, "log_level": "debug", "host": "127.0.0.1"}
+    result = {"port": 8000, "reload": True, "log_level": "debug", "host": "127.0.0.1"}
     for arg in sys.argv[1:]:
         split = arg.split("=")
         if len(split) < 2:
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser = autoParse()
     config = uvicorn.run(
         "index:app",
-        port=int(getenv('SERVER_PORT')),
+        port=int(getenv("SERVER_PORT") if getenv("SERVER_PORT")  else "8000"),
         host='0.0.0.0',
         workers=4,
         reload=parser['reload'],
