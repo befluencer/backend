@@ -6,9 +6,42 @@ from dreema.responses import SysCodes, SysMessages
 from dreema.security import Encrypt, Tokenizer
 from models.appInfoModel import AppInfoModel
 from dreema.redis import Redis
-from dreema.helpers import Json, getconfig
+from dreema.helpers import Json, getconfig, getenv
+from google_auth_oauthlib.flow import Flow
 
 class SystemController:
+
+    async def getGoogleAuth(request:Request):
+        clientId = getenv('GOOGLE_AUTH_CLIENT_ID')
+        clientSecret = getenv('GOOGLE_AUTH_CLIENT_SECRET')
+        redirectUri = 'https://api.befluencerapp/auth/youtube-callback'
+
+        SCOPES = ["https://www.googleapis.com/auth/youtube.readonly"]
+
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": clientId,
+                    "client_secret": clientSecret,
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                }
+            },
+            scopes=SCOPES
+        )
+
+        flow.redirect_uri = redirectUri
+
+        auth_url, state = flow.authorization_url(
+            access_type="offline",
+            include_granted_scopes="true",
+            prompt="consent",
+        )
+
+        return response(data={
+            'auth_url': auth_url,
+            'state': state
+        }, status=SysCodes.OP_COMPLETED)
 
     async def login(request:Request):
         body = await request.trimApplyRules({

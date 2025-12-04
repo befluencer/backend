@@ -5,5 +5,6 @@ class SystemViews:
     route = [
         route(path="/auth/login", methods=['POST'], handler=System.SystemController.login),
         route(path="/get-logos", methods=['GET'], handler=LogosController.getLogos),
+        route(path="/get-google-auth", methods=['GET'], handler=System.SystemController.getGoogleAuth),
     ]
         

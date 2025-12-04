@@ -19,6 +19,9 @@ jobs:
                   export DB_HOST="${{ secrets.SERVER_HOST }}"
                   export DB_USER="${{ secrets.SERVER_USER }}"
                   export DB_PASSWORD="${{ secrets.MONGO_PWD }}"
+                  export GOOGLE_AUTH_CLIENT_ID="${{ secrets.GOOGLE_AUTH_CLIENT_ID }}"
+                  export GOOGLE_AUTH_CLIENT_SECRET="${{ secrets.GOOGLE_AUTH_CLIENT_SECRET }}"
+                  # export GOOGLE_AUTH_REDIRECT_URI="${{ secrets.GOOGLE_AUTH_REDIRECT_URI }}"
                   # export DB_NAME="${{ secrets.SERVER_USER }}"
                   
                   export MAIL_PASSWORD="${{secrets.MAIL_PWD}}"
