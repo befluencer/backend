@@ -31,12 +31,10 @@ class LogosController:
                     _log.append(logo)
             
             if len(_log) > 0:
-                print('found in log')
                 return response(data=_log, status=SysCodes.OP_COMPLETED, message=SysMessages.OP_COMPLETED)
 
         if res.status < 0 or len(_log) == 0:
             # here we make a request to the backend and get their logos
-            print("Searching from database", body.query)
             url = f'https://api.logo.dev/search?q={body.query}'
             
             # Get authorization header from incoming request
@@ -47,7 +45,7 @@ class LogosController:
             
             http_response = requests.get(url, headers=headers)
             if http_response.status_code != 200:
-                return response(status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED)
+                return response(status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED, trace=http_response.text)
 
             data = http_response.json()
             actualLogos = []
