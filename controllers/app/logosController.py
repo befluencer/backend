@@ -39,19 +39,14 @@ class LogosController:
             
             # Get authorization header from incoming request
             headers = {}
-            # auth_header = request.headers().get('authorization') or request.headers().get('')
-            # if auth_header:
             headers['Authorization'] = 'sk_NySxTEHLRku8WVvrKrvEiQ'
             
             http_response = requests.get(url, headers=headers)
             if http_response.status_code != 200:
-                return response(status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED, trace=http_response.text)
+                return response(data=None, status=SysCodes.OP_FAILED, message=SysMessages.OP_FAILED)
 
             data = http_response.json()
             actualLogos = []
-            
-
-            print("searching from database", data)
 
             if res.status > 0:
                 for logo in data:
@@ -60,8 +55,10 @@ class LogosController:
                             actualLogos.append(logo)
                             break
             
+            if not data:
+                return response(data=None, status=SysCodes.OP_FAILED, message="No logos found for this search")
+
             res = await mod.create(model='app-logos', data=data)
-            print("created in database", res)
-            return response(data=data, custom=True)
+            return response(res, custom=True)
 
         return response(message="Could not find brand", status=SysCodes.NO_RECORD)
