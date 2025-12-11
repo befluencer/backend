@@ -39,9 +39,9 @@ class LogosController:
             
             # Get authorization header from incoming request
             headers = {}
-            auth_header = request.headers().get('authorization') or request.headers().get('sk_NySxTEHLRku8WVvrKrvEiQ')
-            if auth_header:
-                headers['Authorization'] = auth_header
+            # auth_header = request.headers().get('authorization') or request.headers().get('')
+            # if auth_header:
+            headers['Authorization'] = 'sk_NySxTEHLRku8WVvrKrvEiQ'
             
             http_response = requests.get(url, headers=headers)
             if http_response.status_code != 200:
