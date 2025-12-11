@@ -59,6 +59,6 @@ class LogosController:
                 return response(data=None, status=SysCodes.OP_FAILED, message="No logos found for this search")
 
             res = await mod.create(model='app-logos', data=data)
-            return response(res, custom=True)
+            return response(data=data, status=SysCodes.OP_COMPLETED, message=SysMessages.OP_COMPLETED)
 
         return response(message="Could not find brand", status=SysCodes.NO_RECORD)
